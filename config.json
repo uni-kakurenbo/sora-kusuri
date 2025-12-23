@@ -1,15 +1,20 @@
 {
-    "interval": 1000,
+    "interval": 10000,
     "schedules": [
         {
-            "time": "19:51",
+            "time": "07:00",
             "content": ":pill:",
-            "userId": "01961951-11eb-7ae8-94f0-c753f6aeea36"
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
         },
         {
-            "time": "19:50",
+            "time": "12:30",
+            "content": "がくわり",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "23:30",
             "content": ":pill:",
-            "userId": "01961951-11eb-7ae8-94f0-c753f6aeea36"
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
         }
     ]
 }
