@@ -1,0 +1,15 @@
+{
+    "interval": 1000,
+    "schedules": [
+        {
+            "time": "19:51",
+            "content": ":pill:",
+            "userId": "01961951-11eb-7ae8-94f0-c753f6aeea36"
+        },
+        {
+            "time": "19:50",
+            "content": ":pill:",
+            "userId": "01961951-11eb-7ae8-94f0-c753f6aeea36"
+        }
+    ]
+}

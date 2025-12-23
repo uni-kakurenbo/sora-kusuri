@@ -1,0 +1,13 @@
+{
+  "name": "sora-kusuri",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "traq-bot-ts": "^1.5.2"
+  }
+}
