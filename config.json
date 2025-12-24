@@ -1,5 +1,6 @@
 {
     "interval": 10000,
+    "adminId": "01961951-11eb-7ae8-94f0-c753f6aeea36",
     "schedules": [
         {
             "time": "07:00",
@@ -12,7 +13,17 @@
             "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
         },
         {
-            "time": "23:30",
+            "time": "13:15",
+            "content": "がくわり",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "15:00",
+            "content": "がくわり",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "23:00",
             "content": ":pill:",
             "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
         }
