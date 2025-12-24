@@ -1,5 +1,13 @@
-import { Api, Client, type DMChannel, type HttpResponse } from "traq-bot-ts";
+import {
+    Api,
+    Client,
+    type DMChannel,
+    type HttpResponse,
+    type Message,
+    type User,
+} from "traq-bot-ts";
 import fs from "node:fs/promises";
+import { setTimeout } from "node:timers/promises";
 
 const client = new Client({ token: process.env.BOT_ACCESS_TOKEN });
 const api = new Api({
@@ -19,6 +27,36 @@ async function fetchConfig(path: string) {
     }
 }
 
+function toTimeDisplay(date: Date) {
+    return date.toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+    });
+}
+
+async function fetchLogMessage(messageId: string) {
+    let retry = 40;
+    let hits: Message[] = [];
+    do {
+        const { data } = await api.messages.searchMessages({
+            in: adminDmChannelId,
+            bot: true,
+            word: messageId,
+            sort: "-createdAt",
+        });
+        hits = data.hits;
+        if (hits[0]) break;
+
+        await setTimeout(3 * 1000);
+    } while (retry-- > 0);
+
+    return hits[0];
+}
+
 interface Schedule {
     readonly time: string;
     readonly userId: string;
@@ -27,6 +65,7 @@ interface Schedule {
 
 interface Config {
     readonly interval: number;
+    readonly adminId: string;
     readonly schedules: Schedule[];
 }
 
@@ -45,40 +84,23 @@ function getEndOfDate(date: Date = new Date()) {
 
 client.listen(() => {
     console.log("Listening...");
-    main();
+
+    setInterval(main, config.interval);
 });
 
-client.on(
-    "DIRECT_MESSAGE_CREATED",
-    ({
-        body: {
-            message: { channelId, text, createdAt: _createdAt },
-        },
-    }) => {
-        const createdAt = new Date(_createdAt);
-        const latency =
-            new Date().getMilliseconds() - createdAt.getMilliseconds();
+const config = await fetchConfig(CONFIG_PATH);
 
-        console.log(latency);
+if (config.interval < 1000) {
+    throw new Error("Interval too short");
+}
 
-        if (text.toLowerCase() === "!ping") {
-            api.channels.postMessage(channelId, {
-                content: `Pong!\n - latency: ${latency}`,
-            });
-        }
-    }
-);
+const {
+    data: { id: adminDmChannelId },
+} = await api.users.getUserDmChannel(config.adminId);
 
 const bootedAt = new Date();
 
-async function main() {
-    const config = await fetchConfig(CONFIG_PATH);
-    console.log(config);
-
-    if (config.interval < 1000) {
-        throw new Error("Interval too short");
-    }
-
+function main() {
     while (lastSentAt.length < config.schedules.length) {
         lastSentAt.push(bootedAt);
     }
@@ -95,14 +117,103 @@ async function main() {
 
         lastSentAt[index] = getEndOfDate(nextDate);
 
+        // api.users.postDirectMessage(userId, { content });
+
         const {
-            data: { id: channelId },
-        } = await api.users
-            .getUserDmChannel(userId)
-            .then((response) => response as HttpResponse<DMChannel>);
+            data: { name: userName },
+        } = await api.users.getUser(userId);
 
-        api.channels.postMessage(channelId, { content: content });
+        api.users.postDirectMessage(config.adminId, {
+            content: `to: @${userName}\n> ${content.split("\n").join("\n> ")}`,
+            embed: true,
+        });
     });
-
-    setTimeout(main, config.interval);
 }
+
+client.on(
+    "DIRECT_MESSAGE_CREATED",
+    ({
+        body: {
+            message: {
+                id,
+                text,
+                channelId,
+                user: { name: userName },
+                createdAt,
+            },
+        },
+    }) => {
+        const latency =
+            new Date().getMilliseconds() - createdAt.getMilliseconds();
+
+        if (text.toLowerCase() === "!ping") {
+            return api.channels.postMessage(channelId, {
+                content: `Pong!\n - latency: ${latency}`,
+            });
+
+            return;
+        }
+
+        api.users.postDirectMessage(config.adminId, {
+            content: `from: @${userName} [\`${id}\`]\n\n\nat: ${toTimeDisplay(
+                createdAt
+            )}\n > ${text}\n\n`,
+            embed: true,
+        });
+    }
+);
+
+client.on(
+    "DIRECT_MESSAGE_DELETED",
+    async ({
+        body: {
+            message: { id },
+            eventTime,
+        },
+    }) => {
+        const message = await fetchLogMessage(id);
+        if (message) {
+            const { id, content } = message;
+
+            api.messages.editMessage(id, {
+                content: `${content}\nat: ${toTimeDisplay(
+                    eventTime
+                )}\n> _(deleted)_`,
+            });
+
+            return;
+        }
+
+        api.users.postDirectMessage(config.adminId, {
+            content: `deleted: ${id}`,
+        });
+    }
+);
+
+client.on(
+    "DIRECT_MESSAGE_UPDATED",
+
+    async ({
+        body: {
+            message: { id, text, updatedAt },
+        },
+    }) => {
+        const message = await fetchLogMessage(id);
+
+        if (message) {
+            const { id, content } = message;
+
+            api.messages.editMessage(id, {
+                content: `${content}\nat: ${toTimeDisplay(
+                    updatedAt
+                )}\n> ${text}\n\n`,
+            });
+
+            return;
+        }
+
+        api.users.postDirectMessage(config.adminId, {
+            content: `updated: ${id}\n> ${text}`,
+        });
+    }
+);
