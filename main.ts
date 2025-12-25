@@ -117,7 +117,7 @@ function main() {
 
         lastSentAt[index] = getEndOfDate(nextDate);
 
-        // api.users.postDirectMessage(userId, { content });
+        api.users.postDirectMessage(userId, { content });
 
         const {
             data: { name: userName },
