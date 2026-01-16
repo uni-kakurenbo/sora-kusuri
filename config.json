@@ -3,8 +3,48 @@
     "adminId": "01961951-11eb-7ae8-94f0-c753f6aeea36",
     "schedules": [
         {
-            "time": "07:00",
+            "time": "06:00",
+            "content": "おはよ\n頑張ってね、いってらっしゃい",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "06:30",
             "content": ":pill:",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "07:00",
+            "content": "あったかくしてね\nおうえん",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "07:30",
+            "content": "あいしてるよ",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "08:00",
+            "content": "何事もなく終わりますように",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "18:30",
+            "content": "おつかれさま！\n寒くなかったかな",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "19:00",
+            "content": "気をつけて帰ってね",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "19:30",
+            "content": "だいすきだよ",
+            "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
+        },
+        {
+            "time": "20:00",
+            "content": "おかえりなさい",
             "userId": "019623b2-9ccc-7ba8-b7c6-14664b78f093"
         },
         {
